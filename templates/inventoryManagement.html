@@ -1,0 +1,73 @@
+{% extends 'home.html' %}
+{% block hero  %}
+{% endblock hero %}
+
+{% block content %}
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          ...
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Ok</button>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+  
+        
+        <section class="section discover" style="margin-top: 40px;" aria-labelledby="discover-label">
+          <div class="container">
+  
+            <h2 class="headline-md section-title text-left" id="collection-label">Items Management</h2>
+            <p style="margin-top: -40px; margin-bottom: 20px;">
+                Click on item to update
+            </p>
+            <button type="button" class="btn btn-secondary w-100">Add Item</button>
+            <h5 h2 class="headline-md section-title text-left" id="collection-label" style="margin-top: 10px; margin-bottom: 10px;">
+             <small>Application Items</small> 
+            </h5>
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-default">Search</span>
+              </div>
+              <input type="text" style="background-color: transparent; height: 40px; border-color: grey;" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
+            </div>
+            <table class="table">
+              <thead>
+                <tr>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                
+                  <td> <figure class="card-banner">
+                      <img src="./assets/images/avatar-1.jpg" width="64" height="64" loading="lazy"
+                        alt="Steven Townsend profile">
+    
+                      <ion-icon name="checkmark-circle"></ion-icon>
+                    </figure></td>
+                  
+                  <td><p style="color: white;">item Name</p></td>
+                  <td> </td>
+                  <td>        </td>
+                  <td>   <button type="button" style="height: 35px;" class="btn btn-secondary" data-dismiss="modal">Update</button></td>
+                  <td>   <button type="button" style="height: 35px;" class="btn btn-secondary" data-dismiss="modal">delete</button></td>
+                </tr>
+                
+              </tbody>
+            </table>
+      
+  
+          </div>
+        </section>  
+
+{% endblock %}

@@ -1,0 +1,162 @@
+{% extends 'home.html' %}
+{% block hero  %}
+{% endblock hero %}
+
+{% block content %}
+
+  <div class="modal fade" id="updateform" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">Item Updated successfully</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <P>order item updated successfully</P>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Ok</button>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <style>
+    .update {
+        
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 40%;
+}
+    </style>
+        
+  <section>
+    <div class="update">
+        <div style="margin-top: 160px;" >
+            <h1 style="color:white;margin-bottom: 30px;">Update item</h1>
+            <div>
+                <style>
+                    h6{
+                        color: red;
+                    }
+                </style>
+                {% for message in messages %}
+                <h6>{{message}}</h6>
+                {% endfor %}
+            </div>
+        <form id="formUpdate">
+            {% csrf_token %}
+            <div class="form-group">
+              <label for="exampleInputEmail1">Name</label>
+              <input type="text" value="{{item.name}}" name="name" class="form-control" id="exampleInputEmail1" placeholder="">
+            </div>
+            <div class="form-group">
+              <label for="exampleInputPassword1">Description</label>
+              <input type="text" value="{{item.description}}" name="description" class="form-control" id="exampleInputPassword1" placeholder="">
+            </div>
+            
+            <input type="number" value="{{item.id}}" hidden name="itemId" class="form-control" id="exampleInputPassword1" placeholder="">
+
+            <button style="float: right;margin-left: 10px;" type="submit" class="btn btn-primary">update item</button>
+            
+           
+        </form>
+
+        </div>
+    </div>
+  </section>
+  <div style="margin-top: 200px;" ></div>
+  
+  
+
+{% endblock %}
+
+{% block scripts %}
+      
+<script>
+
+var form = document.getElementById('formUpdate')
+
+form.addEventListener('submit', function(e){
+        e.preventDefault()
+     
+        console.log('Form Submitted...');
+        submitFormData();
+      
+})
+
+function getToken(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    var csrftoken = getToken('csrftoken')
+    
+
+function submitFormData(){
+       
+        var itemData = {
+            'name':null,
+            'description':null,
+        }
+
+        itemData.name = form.name.value
+        itemData.description = form.description.value
+
+        itemId = form.itemId.value
+
+        
+        var URL = "/order/item/"+itemId+"/";
+
+        var dataObject = itemData;
+
+
+        function csrfSafeMethod(method) {
+            // these HTTP methods do not require CSRF protection
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        }
+
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+
+
+        $.ajax({
+            url: URL,
+            type: 'PUT',    
+            data: JSON.stringify(dataObject),
+            contentType : 'application/json',
+            success: function(result) {
+                $('#updateform').modal('show')
+
+                $('#updateform').on('hidden.bs.modal', function (e) {
+                
+                    window.location.href = "{% url 'ordersettings' %}"
+                    })
+            }
+        });
+        
+    }
+
+
+</script>
+{% endblock scripts %} 

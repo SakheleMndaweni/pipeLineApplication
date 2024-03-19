@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- Basic -->
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <!-- Mobile Metas -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <!-- Site Metas -->
+  <meta name="keywords" content="" />
+  <meta name="description" content="" />
+  <meta name="author" content="" />
+  {% load static %}
+  <link rel="shortcut icon" href="{% static 'images/favicon.png' %}" type="">
+  <title> Order Pipeline - Client Application </title>
+  <!-- bootstrap core css -->
+  <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}" />
+  <!-- fonts style -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <!--owl slider stylesheet -->
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" />
+  <!-- font awesome style -->
+  <link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet" />
+  <!-- Custom styles for this template -->
+  <link href="{% static  'css/style.css' %}" rel="stylesheet" />
+  <!-- responsive style -->
+  <link href="{% static  'css/responsive.css' %}" rel="stylesheet" />
+  <script>
+    var user = '{{request.user}}'
+    function getToken(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    var csrftoken = getToken('csrftoken')
+
+    function getCookie(name) {
+        // Split cookie string and get all individual name=value pairs in an array
+        var cookieArr = document.cookie.split(";");
+
+        // Loop through the array elements
+        for(var i = 0; i < cookieArr.length; i++) {
+            var cookiePair = cookieArr[i].split("=");
+
+            /* Removing whitespace at the beginning of the cookie name
+            and compare it with the given string */
+            if(name == cookiePair[0].trim()) {
+                // Decode the cookie value and return
+                return decodeURIComponent(cookiePair[1]);
+            }
+        }
+
+        // Return null if not found
+        return null;
+    }
+    var order = JSON.parse(getCookie('order'))
+    if (order == undefined){
+      order = {}
+      console.log('Order Created!', order)
+      document.cookie ='cart=' + JSON.stringify(order) + ";domain=;path=/"
+    }
+    console.log('Order:', order)
+  </script>
+</head>
+<body>
+  {% block navbar %}
+  <header class="header" data-header>
+    <div class="container">
+      <a href="#" >
+        <span style="display: inline;"><img style="display: inline;"src="{% static 'images/logo.png' %}" width="35" height="35" alt="Metalink home" class="logo"> <p style="display: inline;color:white;">Order Pipeline</p></span>
+      </a>
+      <nav class="navbar" data-navbar>
+        <ul class="navbar-list">
+          <li>
+            <a href="{% url 'home' %}" class="navbar-link label-lg link:hover">Home</a>
+          </li>
+          <li>
+            <a href="{% url 'ordersettings' %}" class="navbar-link label-lg link:hover">Settings</a>
+          </li>
+          <li>
+            <a href="{% url 'logoutUserAccount' %}" class="navbar-link label-lg link:hover">Logout</a>
+          </li>
+        </ul>
+      </nav>
+      <div class="header-action">
+        <button class="btn-icon primary"  data-toggle="modal" data-target="#bd-example-modal">
+          <ion-icon name="wallet-outline"></ion-icon>
+        </button>
+        <button class="nav-toggle-btn" aria-label="menu toggle" data-nav-toggler>
+          <ion-icon name="menu-outline" aria-hidden="true" class="default-icon"></ion-icon>
+          <ion-icon name="close-outline" aria-hidden="true" class="active-icon"></ion-icon>
+        </button>
+      </div>
+    </div>
+  </header>
+  {% endblock navbar %}
+  <main>
+    <article>
+      {% block hero  %}
+      <section class="section hero" style="margin-top: -50px;" aria-label="home">
+        <div class="container">
+          <h1 class="headline-lg hero-title">
+           <small>Comsol Order Pipeline Application</small>
+          </h1>
+          <p class="section-text body-lg"><small>
+            Comsol Assessment Task 1 solution Order Application  
+          </p></small>
+          
+          
+
+        </div>
+      </section>
+      {% endblock hero %}
+
+  <style>
+    .modal-backdrop {
+   background-color: hsla(222, 47%, 11%, 1);
+}
+  </style>
+
+  <div class="modal fade bd-example-modal-lg" id="bd-example-modal"  tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content" >
+        <div class="modal-header">
+          <h2 class="modal-title headline-md" style="color: gray;"  id="exampleModalCenterTitle">Unprocessed Order</h2>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body ml-2 mr-2">
+          <h5 class="modal-title " id="exampleModalCenterTitle">Number of Items: {{orderItems}}</h5>
+          <div class="container">
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Item</th>
+                <th scope="col">quantity</th>
+                <th scope="col">Added to App</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in itemList %}
+                <tr>
+                  <td>{{item.product.name}}</td>
+                  <td>{{item.quantity}}</td>
+                  <td>{{item.date}}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" style="height: 35px;" class="btn btn-primary btn-sm" data-dismiss="modal">Cancel</button>
+          <button type="button" style="height: 35px;" class="btn btn-secondary btn-sm" data-dismiss="modal" data-toggle="modal" data-target="#orderhistory" >History</button>
+          <button type="button" style="height: 35px;" id="processItemOrder" class="btn btn-primary" data-order="{{order.id}}">
+            Process Order
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade bd-example-modal-lg" id="orderhistory"  tabindex="-1" role="dialog" aria-labelledby="LargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title" id="exampleModalCenterTitle">Order History</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body ml-2 mr-2">
+          <h5 class="modal-title mt-2 mb-2" id="exampleModalCenterTitle">Application Order History</h5>
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text" id="basic-addon1">@</span>
+            </div>
+            <input type="text" class="form-control" placeholder="Search" aria-label="search" aria-describedby="basic-addon1">
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Orde Date and Time</th>
+                <th scope="col">Number of Items</th>
+                <th scope="col">Order Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for order in allorders %}
+              <tr>
+               
+                <td>{{order.orderDate}}</td>
+                <td>{{order.getNumberOfitems}}</td>
+                <td>{{order.orderStatus}}</td>
+              
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" style="height: 35px;" class="btn btn-secondary" data-dismiss="modal"  data-toggle="modal" data-target=".bd-example-modal-lg">Done</button>
+        </div>
+      </div>
+    </div>
+  </div>
+<!-- Modal -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="exampleModalLongTitle">Order Item added successfully</h2>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Order Item was added successfully to current order, check current order for more information</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" style="height: 35px;" class="btn btn-secondary" data-dismiss="modal">Ok</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="orderProcessedMessage" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="exampleModalLongTitle">Order Process Status</h2>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p id="responseMessage"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" style="height: 35px;" class="btn btn-secondary" data-dismiss="modal">Ok</button>
+        
+      </div>
+    </div>
+  </div>
+</div>
+{% block content %}
+      
+      <section class="section discover" style="margin-top: -30px;" aria-labelledby="discover-label">
+        <div class="container">
+
+          <h2 class="headline-md section-title text-left" id="collection-label">Explore Application Items</h2>
+          <p style="margin-top: -40px; margin-bottom: 20px;">
+              Click on item to add to order
+          </p>
+
+          <ul class="grid-list">
+            {% for item in allitems %}
+
+            <li>
+
+              <div class="discover-card card">
+
+                <div class="card-banner img-holder" style="--width: 500; --height: 500;">
+                  <img src="{% static 'images/itemimage.jpg' %}"  width="500" height="500" loading="lazy"
+                    alt="Genuine Undead #3902" class="img-cover">
+
+                  <button data-item={{item.id}} data-action="add" data-toggle="modal" data-target="#exampleModalCenter" class="btn essence-btn update-order" >Add to order</button>
+                </div>
+
+                <div class="card-profile">
+                  
+                </div>
+
+                <h3 class="title-sm card-title">
+                  <a href="#" class="link:hover"><h3>{{item.name}}</h3></a>
+                  <p><small>{{item.description}}</small></p>
+                </h3>
+
+              </div>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </section>
+
+{% endblock content %}
+  </main>
+  <footer class="footer">
+    <div class="section footer-top">
+      <div class="container">
+
+        <div class="footer-brand mt--3">
+          <a href="#">
+            <span style="display: inline;"><img style="display: inline;"src="{% static 'images/logo.png' %}" width="60" height="60" alt="Metalink home" class="logo"> <p style="display: inline;">Order Pipeline</p></span>
+          </a>
+        </div>
+        <div class="footer-list">
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container">
+        <p class="body-md text-center copyright">
+          &copy; 2024 comsol task 1 Pipeline Application. Developed with <span class="span">❤</span> by Sakhele Mndaweni.
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <a href="#top" class="back-to-top btn-icon" aria-label="back to top" data-back-top-btn>
+    <ion-icon name="arrow-up" aria-hidden="true"></ion-icon>
+  </a>
+  <div class="body-bg-shape"></div>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous">
+  </script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+  <script type="text/javascript" src="{% static 'js/custom.js' %}"></script>
+  <script src="{% static 'js/jquery-3.4.1.min.js' %}" type="text/javascript" ></script>
+  <script type="text/javascript" src="{% static  'js/bootstrap.js' %}"></script>
+  
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCh39n5U-4IoWpsVGUHWdqB6puEkhRLdmI&callback=myMap"></script>
+  {% block scripts %}
+      
+   <script>
+    var updateBtns = document.getElementsByClassName('update-order')
+
+for (i = 0; i < updateBtns.length; i++) {
+	updateBtns[i].addEventListener('click', function(){
+		var itemId = this.dataset.item
+		var action = this.dataset.action
+		console.log('itemId:', itemId, 'Action:', action)
+		console.log('USER:', user)
+		updateUserOrder(itemId, action)
+		
+	})
+}
+
+function updateUserOrder(itemId, action){
+
+		var url = '/order/'
+
+		fetch(url, {
+			method:'POST',
+			headers:{
+				'Content-Type':'application/json',
+				'X-CSRFToken':csrftoken,
+			}, 
+			body:JSON.stringify({'itemId':itemId, 'action':action})
+		})
+		.then((response) => {
+		   return response.json();
+		})
+		.then((data) => {
+        
+      $('#exampleModalCenter').modal('show')
+
+      $('#exampleModalCenter').on('hidden.bs.modal', function (e) {
+        location.reload()
+        })
+		    
+		});
+}
+
+const btn = document.querySelector("#processItemOrder")
+
+btn.addEventListener("click",function(){
+      orderId = this.dataset.order
+
+      processMyOrder(orderId)
+})
+
+
+function processMyOrder(orderID){
+		
+    url ='/process/Order/'+orderID+'/' 
+
+		fetch(url, {
+			method:'GET',
+			headers:{
+				'Content-Type':'application/json',
+				'X-CSRFToken':csrftoken,
+			}, 
+		})
+		.then((response) => {
+      
+		   return response.json();
+		})
+		.then((data) => {
+      $('#bd-example-modal').modal('hide')
+
+
+      document.getElementById("responseMessage").innerHTML = data;
+      $('#orderProcessedMessage').modal('show')
+
+      $('#orderProcessedMessage').on('hidden.bs.modal', function (e) {
+        location.reload()
+        })
+		    
+		});
+}
+
+function addCookieItem(itemId, action){
+	console.log('User is not authenticated')
+
+	if (action == 'add'){
+		if (order[itemId] == undefined){
+		order[itemId] = {'quantity':1}
+
+		}else{
+			order[itemId]['quantity'] += 1
+		}
+	}
+
+	if (action == 'remove'){
+		order[itemId]['quantity'] -= 1
+
+		if (order[productId]['quantity'] <= 0){
+			console.log('Item should be deleted')
+			delete order[itemId];
+		}
+	}
+	console.log('ORDER:', order)
+	document.cookie ='order=' + JSON.stringify(order) + ";domain=;path=/"
+	
+	location.reload()
+}
+
+
+   </script>
+
+
+  {% endblock scripts %}
+</body>
+
+</html>

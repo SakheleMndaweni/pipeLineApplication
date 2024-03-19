@@ -1,0 +1,251 @@
+{% extends 'home.html' %}
+
+{% load static %}
+
+{% block hero  %}
+{% endblock hero %}
+
+{% block content %}
+<div class="modal fade" id="addnewform" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">Add item to App</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="newitemform">
+            <div class="form-group">
+              <label for="exampleInputEmail1">Item Name</label>
+              <input type="text" name="name" class="form-control" id="exampleInputEmail1" placeholder="Enter Item name">
+            </div>
+            <div class="form-group">
+              <label for="exampleInputPassword1">Description</label>
+              <input type="text" name="description" class="form-control" id="exampleInputPassword1" placeholder="Enter Item description">
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">save</button>
+        </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="deleteMessage" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">Deleted successfully</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <P>Item was successfully deleted</P>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Ok</button>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="addMessage" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">New Item added successfully</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <P>Order item added successfully</P>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Ok</button>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  
+        
+        <section class="section discover" style="margin-top: 40px;" aria-labelledby="discover-label">
+          <div class="container">
+  
+            <h2 class="headline-md section-title text-left" id="collection-label">Items Management</h2>
+            <p style="margin-top: -40px; margin-bottom: 20px;">
+                Click on update button to update items
+            </p>
+            <button type="button" class="btn btn-secondary w-100" data-toggle="modal" data-target="#addnewform">Add Item</button>
+            <h5 h2 class="headline-md section-title text-left" id="collection-label" style="margin-top: 10px; margin-bottom: 10px;">
+             <small>Application Items</small> 
+            </h5>
+            
+            <table class="table mt-4">
+              <thead>
+                <tr>
+                </tr>
+              </thead>
+              <tbody>
+                {% for item in all_items %}
+                <tr>
+                
+                  <td> <figure class="card-banner">
+                      <img style="border-radius: 7px;" src="{% static 'images/itemimage.jpg' %}" width="30" height="30" loading="lazy"
+                        alt="Steven Townsend profile">
+    
+                      <ion-icon name="checkmark-circle"></ion-icon>
+                    </figure></td>
+                  
+                  <td><p style="color: white;">{{item.name}}</p></td>
+                  <td><p style="color: white;">{{item.description}}</p></td>
+                  <td>   </td>
+                  <td> <a  href="{% url 'updateOrderItem' item.id %}" style="height: 35px; float: right;" class="btn btn-secondary" data-dismiss="modal">Update</a></td>
+                  <td>   <button type="button" style="height: 35px;float: right;" data-item="{{item.id}}" class="btn btn-secondary delete-item">delete</button></td>
+                </tr>
+                {% endfor %}
+                
+              </tbody>
+            </table>
+      
+  
+          </div>
+        </section>
+
+{% endblock %}
+
+{% block scripts %}
+      
+<script>
+ var deleteBtns = document.getElementsByClassName('delete-item')
+
+for (i = 0; i < deleteBtns.length; i++) {
+  deleteBtns[i].addEventListener('click', function(){
+ var itemId = this.dataset.item
+
+ console.log('itemId:', itemId)
+
+      deleteOrderItem(itemId)
+ 
+})
+}
+
+var form = document.getElementById('newitemform')
+    form.addEventListener('submit', function(e){
+        e.preventDefault()
+        submitFormData();
+      
+    })
+
+  function getToken(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    var csrftoken = getToken('csrftoken')
+    
+    
+
+function deleteOrderItem(itemId){
+
+ var URL = "/order/item/"+itemId+"/";
+
+
+        function csrfSafeMethod(method) {
+            // these HTTP methods do not require CSRF protection
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        }
+
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+
+
+        $.ajax({
+            url: URL,
+            type: 'DELETE',    
+            contentType : 'application/json',
+            success: function(result) {
+                $('#deleteMessage').modal('show')
+
+                $('#deleteMessage').on('hidden.bs.modal', function (e) {
+                
+                    location.reload()
+                    })
+            }
+        });
+}
+
+function submitFormData(){
+        var itemData = {
+            'name':null,
+            'description':null,
+        }
+
+        itemData.name = form.name.value
+        itemData.description = form.description.value
+
+        
+        var URL = "/order/item/";
+
+        var dataObject = itemData;
+
+        function csrfSafeMethod(method) {
+            // these HTTP methods do not require CSRF protection
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        }
+
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+
+
+        $.ajax({
+            url: URL,
+            type: 'POST',    
+            data: JSON.stringify(dataObject),
+            contentType : 'application/json',
+            success: function(result) {
+              $('#addnewform').modal('hide')
+              $('#addMessage').modal('show')
+              $('#addMessage').on('hidden.bs.modal', function (e) {
+                
+                location.reload()
+                })
+
+              
+            }
+        });
+    }
+
+
+</script>
+
+
+{% endblock scripts %}
