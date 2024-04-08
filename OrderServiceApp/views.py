@@ -114,7 +114,7 @@ async def precessOrder(request,orderId):
 
     async with aiohttp.ClientSession() as session:
         for item in items:
-            url = f"http://127.0.0.1:8001/inventory/{item['itemCode']}/{item['quantity']}/"
+            url = f"http://13.53.206.116/inventory/{item['itemCode']}/{item['quantity']}/"
             actions.append(asyncio.ensure_future(get_validation(session, url)))
 
         res_item = await asyncio.gather(*actions)
