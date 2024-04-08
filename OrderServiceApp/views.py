@@ -91,6 +91,10 @@ def updateItem(request):
 def get_all_order(order):
     return Order.objects.get(id = order)
 
+@sync_to_async
+def getProductCode(orderItem):
+     return orderItem.product.itemCode
+
 async def get_validation(session, url):
     async with session.get(url) as res:
         item_data = await res.json()
@@ -103,7 +107,8 @@ async def precessOrder(request,orderId):
     items = []
             # getting all items related to the order that must be processed
     async for od in OrderItem.objects.filter(order = order):
-            items.append({'itemCode': od.product.itemCode , 'quantity':od.quantity})
+            itemCode = await getProductCode(od)
+            items.append({'itemCode': itemCode , 'quantity':od.quantity})
     actions = []
     item_data = []
 
